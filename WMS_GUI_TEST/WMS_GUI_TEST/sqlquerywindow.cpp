@@ -9,7 +9,8 @@
 
 SQLQueryWindow::SQLQueryWindow(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::SQLQueryWindow)
+    ui(new Ui::SQLQueryWindow),
+    model(nullptr)
 {
     ui->setupUi(this);
 

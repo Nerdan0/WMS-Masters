@@ -11,6 +11,8 @@
 OrderLinesWindow::OrderLinesWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrderLinesWindow),
+    model(nullptr),
+    mapper(nullptr),
     isAdding(false),
     currentOrderId(0),
     currentOrderIndex(0)
@@ -39,6 +41,16 @@ OrderLinesWindow::OrderLinesWindow(QWidget *parent) :
 
 OrderLinesWindow::~OrderLinesWindow()
 {
+    if (mapper) {
+        delete mapper;
+        mapper = nullptr;
+    }
+
+    if (model) {
+        delete model;
+        model = nullptr;
+    }
+
     delete ui;
 }
 
@@ -128,6 +140,7 @@ void OrderLinesWindow::setupLineModel()
     // If already initialized, just update the model
     if (model) {
         delete model;
+        model = nullptr;
     }
 
     model = new QSqlRelationalTableModel(this);
@@ -135,7 +148,7 @@ void OrderLinesWindow::setupLineModel()
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     // Set relations
-    model->setRelation(2, QSqlRelation("items", "id", "item_code || ' - ' || item_description"));
+    model->setRelation(3, QSqlRelation("items", "id", "item_code || ' - ' || item_description"));
 
     // Filter by current order
     model->setFilter(QString("order_id = %1").arg(currentOrderId));
@@ -164,6 +177,7 @@ void OrderLinesWindow::setupMapper()
 {
     if (mapper) {
         delete mapper;
+        mapper = nullptr;
     }
 
     mapper = new QDataWidgetMapper(this);
@@ -281,8 +295,10 @@ void OrderLinesWindow::on_saveLineButton_clicked()
         model->setData(model->index(row, 3), ui->itemComboBox->currentData()); // Item ID
         model->setData(model->index(row, 4), ui->quantitySpinBox->value()); // Quantity
     } else {
-        // Update existing record
-        mapper->submit();
+        // Update existing record (we don't need to update order_id/order_number as they shouldn't change)
+        int currentRow = ui->tableView->currentIndex().row();
+        model->setData(model->index(currentRow, 3), ui->itemComboBox->currentData()); // Item ID
+        model->setData(model->index(currentRow, 4), ui->quantitySpinBox->value()); // Quantity
     }
 
     // Submit changes to database

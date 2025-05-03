@@ -9,6 +9,8 @@
 OrdersWindow::OrdersWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrdersWindow),
+    model(nullptr),
+    mapper(nullptr),
     orderLinesWindow(nullptr),
     isAdding(false)
 {
@@ -39,10 +41,19 @@ OrdersWindow::~OrdersWindow()
     if (orderLinesWindow) {
         orderLinesWindow->close();
         delete orderLinesWindow;
+        orderLinesWindow = nullptr;
     }
 
-    delete mapper;
-    delete model;
+    if (mapper) {
+        delete mapper;
+        mapper = nullptr;
+    }
+
+    if (model) {
+        delete model;
+        model = nullptr;
+    }
+
     delete ui;
 }
 

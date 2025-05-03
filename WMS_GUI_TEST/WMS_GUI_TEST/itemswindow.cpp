@@ -2,13 +2,24 @@
 #include "ui_itemswindow.h"
 #include <QMessageBox>
 #include <QSqlError>
+#include <QScreen>
+#include <QGuiApplication>
 
 ItemsWindow::ItemsWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ItemsWindow),
+    model(nullptr),
+    mapper(nullptr),
     isAdding(false)
 {
     ui->setupUi(this);
+
+    // Center window on screen
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int x = (screenGeometry.width() - width()) / 2;
+    int y = (screenGeometry.height() - height()) / 2;
+    move(x, y);
 
     setupModel();
     setupMapper();
@@ -19,8 +30,16 @@ ItemsWindow::ItemsWindow(QWidget *parent) :
 
 ItemsWindow::~ItemsWindow()
 {
-    delete mapper;
-    delete model;
+    if (mapper) {
+        delete mapper;
+        mapper = nullptr;
+    }
+
+    if (model) {
+        delete model;
+        model = nullptr;
+    }
+
     delete ui;
 }
 

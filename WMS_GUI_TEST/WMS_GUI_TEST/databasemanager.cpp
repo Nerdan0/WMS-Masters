@@ -106,9 +106,11 @@ bool DatabaseManager::createTables()
     if (!query.exec("CREATE TABLE IF NOT EXISTS order_lines ("
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                     "order_id INTEGER NOT NULL, "
+                    "order_number TEXT NOT NULL, "
                     "item_id INTEGER NOT NULL, "
                     "quantity INTEGER NOT NULL, "
                     "FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE, "
+                    "FOREIGN KEY (order_number) REFERENCES orders(order_number) ON DELETE CASCADE, "
                     "FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE RESTRICT)")) {
         qDebug() << "Failed to create order_lines table:" << query.lastError().text();
         return false;
@@ -121,47 +123,57 @@ bool DatabaseManager::populateSampleData()
 {
     // Add admin user
     if (!addUser("admin", "admin123")) {
+        qDebug() << "Failed to add admin user";
         return false;
     }
 
     // Add sample users
     if (!addUser("user1", "password1")) {
+        qDebug() << "Failed to add sample user";
         return false;
     }
 
     // Add sample items
     if (!addItem("IT001", "Laptop", 10, 1200.00)) {
+        qDebug() << "Failed to add sample item 1";
         return false;
     }
 
     if (!addItem("IT002", "Mouse", 50, 25.00)) {
+        qDebug() << "Failed to add sample item 2";
         return false;
     }
 
     if (!addItem("IT003", "Keyboard", 30, 45.00)) {
+        qDebug() << "Failed to add sample item 3";
         return false;
     }
 
     // Add sample orders
     QDate today = QDate::currentDate();
     if (!addOrder("ORD001", today, "to")) {
+        qDebug() << "Failed to add sample order 1";
         return false;
     }
 
     if (!addOrder("ORD002", today.addDays(-1), "from")) {
+        qDebug() << "Failed to add sample order 2";
         return false;
     }
 
-    // Add sample order lines
+    // Add sample order lines with updated function signature
     if (!addOrderLine(1, "ORD001", 1, 2)) { // 2 laptops for order ORD001
+        qDebug() << "Failed to add order line 1";
         return false;
     }
 
     if (!addOrderLine(1, "ORD001", 2, 5)) { // 5 mice for order ORD001
+        qDebug() << "Failed to add order line 2";
         return false;
     }
 
     if (!addOrderLine(2, "ORD002", 3, 3)) { // 3 keyboards for order ORD002
+        qDebug() << "Failed to add order line 3";
         return false;
     }
 

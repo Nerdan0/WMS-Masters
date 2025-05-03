@@ -9,6 +9,8 @@
 UsersWindow::UsersWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UsersWindow),
+    model(nullptr),
+    mapper(nullptr),
     isAdding(false),
     isChangingPassword(false)
 {
@@ -30,8 +32,16 @@ UsersWindow::UsersWindow(QWidget *parent) :
 
 UsersWindow::~UsersWindow()
 {
-    delete mapper;
-    delete model;
+    if (mapper) {
+        delete mapper;
+        mapper = nullptr;
+    }
+
+    if (model) {
+        delete model;
+        model = nullptr;
+    }
+
     delete ui;
 }
 
