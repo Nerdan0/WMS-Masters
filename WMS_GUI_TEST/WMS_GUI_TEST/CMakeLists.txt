@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.16)
 project(WMS_GUI_TEST VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOUIC ON)
@@ -23,6 +24,9 @@ set(PROJECT_SOURCES
         orderswindow.cpp
         orderswindow.h
         orderswindow.ui
+        orderlineswindow.cpp
+        orderlineswindow.h
+        orderlineswindow.ui
         userswindow.cpp
         userswindow.h
         userswindow.ui

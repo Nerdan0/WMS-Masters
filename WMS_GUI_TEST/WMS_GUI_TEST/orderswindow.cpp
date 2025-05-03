@@ -4,10 +4,12 @@
 #include <QSqlError>
 #include <QScreen>
 #include <QGuiApplication>
+#include <QSqlQuery>
 
 OrdersWindow::OrdersWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrdersWindow),
+    orderLinesWindow(nullptr),
     isAdding(false)
 {
     ui->setupUi(this);
@@ -27,10 +29,18 @@ OrdersWindow::OrdersWindow(QWidget *parent) :
 
     // Initial state
     updateButtonStates(false);
+
+    // Connect double-click signal
+    connect(ui->tableView, &QTableView::doubleClicked, this, &OrdersWindow::on_tableView_doubleClicked);
 }
 
 OrdersWindow::~OrdersWindow()
 {
+    if (orderLinesWindow) {
+        orderLinesWindow->close();
+        delete orderLinesWindow;
+    }
+
     delete mapper;
     delete model;
     delete ui;
@@ -216,6 +226,24 @@ void OrdersWindow::on_tableView_clicked(const QModelIndex &index)
     }
 }
 
+void OrdersWindow::openOrderLines(int orderId)
+{
+    if (orderId <= 0) {
+        QMessageBox::warning(this, tr("View Order Lines"), tr("Invalid order ID."));
+        return;
+    }
+
+    if (!orderLinesWindow) {
+        orderLinesWindow = new OrderLinesWindow();
+    }
+
+    // Load the order lines for this order
+    orderLinesWindow->loadOrder(orderId);
+    orderLinesWindow->show();
+    orderLinesWindow->raise();
+    orderLinesWindow->activateWindow();
+}
+
 void OrdersWindow::on_viewLinesButton_clicked()
 {
     if (!ui->tableView->currentIndex().isValid()) {
@@ -224,10 +252,13 @@ void OrdersWindow::on_viewLinesButton_clicked()
     }
 
     int orderId = model->data(model->index(ui->tableView->currentIndex().row(), 0)).toInt();
-    QString orderNumber = model->data(model->index(ui->tableView->currentIndex().row(), 1)).toString();
+    openOrderLines(orderId);
+}
 
-    // This will be implemented after we create the OrderLinesWindow class
-    QMessageBox::information(this, tr("Not Implemented"),
-                             tr("Order Lines view not implemented yet. Would show lines for Order ID: %1 (%2)")
-                                 .arg(orderId).arg(orderNumber));
+void OrdersWindow::on_tableView_doubleClicked(const QModelIndex &index)
+{
+    if (index.isValid()) {
+        int orderId = model->data(model->index(index.row(), 0)).toInt();
+        openOrderLines(orderId);
+    }
 }

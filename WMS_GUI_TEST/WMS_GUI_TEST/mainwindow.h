@@ -2,6 +2,7 @@
 
 #include <QMainWindow>
 #include <QVector>
+#include <QCloseEvent>
 #include "itemswindow.h"
 #include "orderswindow.h"
 #include "userswindow.h"
@@ -21,6 +22,9 @@ public:
 
 public slots:
     void show();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void on_itemsButton_clicked();

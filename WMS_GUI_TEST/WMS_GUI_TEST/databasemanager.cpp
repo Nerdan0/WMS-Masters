@@ -153,15 +153,15 @@ bool DatabaseManager::populateSampleData()
     }
 
     // Add sample order lines
-    if (!addOrderLine(1, 1, 2)) { // 2 laptops for order ORD001
+    if (!addOrderLine(1, "ORD001", 1, 2)) { // 2 laptops for order ORD001
         return false;
     }
 
-    if (!addOrderLine(1, 2, 5)) { // 5 mice for order ORD001
+    if (!addOrderLine(1, "ORD001", 2, 5)) { // 5 mice for order ORD001
         return false;
     }
 
-    if (!addOrderLine(2, 3, 3)) { // 3 keyboards for order ORD002
+    if (!addOrderLine(2, "ORD002", 3, 3)) { // 3 keyboards for order ORD002
         return false;
     }
 
@@ -327,11 +327,12 @@ bool DatabaseManager::deleteOrder(int id)
     return true;
 }
 
-bool DatabaseManager::addOrderLine(int orderId, int itemId, int quantity)
+bool DatabaseManager::addOrderLine(int orderId, const QString& orderNumber, int itemId, int quantity)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO order_lines (order_id, item_id, quantity) VALUES (:order_id, :item_id, :quantity)");
+    query.prepare("INSERT INTO order_lines (order_id, order_number, item_id, quantity) VALUES (:order_id, :order_number, :item_id, :quantity)");
     query.bindValue(":order_id", orderId);
+    query.bindValue(":order_number", orderNumber);
     query.bindValue(":item_id", itemId);
     query.bindValue(":quantity", quantity);
 
@@ -343,12 +344,13 @@ bool DatabaseManager::addOrderLine(int orderId, int itemId, int quantity)
     return true;
 }
 
-bool DatabaseManager::updateOrderLine(int id, int orderId, int itemId, int quantity)
+bool DatabaseManager::updateOrderLine(int id, int orderId, const QString& orderNumber, int itemId, int quantity)
 {
     QSqlQuery query;
-    query.prepare("UPDATE order_lines SET order_id = :order_id, item_id = :item_id, quantity = :quantity WHERE id = :id");
+    query.prepare("UPDATE order_lines SET order_id = :order_id, order_number = :order_number, item_id = :item_id, quantity = :quantity WHERE id = :id");
     query.bindValue(":id", id);
     query.bindValue(":order_id", orderId);
+    query.bindValue(":order_number", orderNumber);
     query.bindValue(":item_id", itemId);
     query.bindValue(":quantity", quantity);
 

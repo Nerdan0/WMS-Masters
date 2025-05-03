@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DATABASEMANAGER_H
+#define DATABASEMANAGER_H
 
 #include <QObject>
 #include <QSqlDatabase>
@@ -34,8 +35,8 @@ public:
     bool deleteOrder(int id);
 
     // Order Lines
-    bool addOrderLine(int orderId, int itemId, int quantity);
-    bool updateOrderLine(int id, int orderId, int itemId, int quantity);
+    bool addOrderLine(int orderId, const QString& orderNumber, int itemId, int quantity);
+    bool updateOrderLine(int id, int orderId, const QString& orderNumber, int itemId, int quantity);
     bool deleteOrderLine(int id);
 
     // Execute raw SQL query
@@ -53,3 +54,5 @@ private:
 
     QSqlDatabase m_db;
 };
+
+#endif // DATABASEMANAGER_H

@@ -45,6 +45,14 @@ void SQLQueryWindow::on_executeButton_clicked()
         return;
     }
 
+    // Check if the query is a SELECT query
+    QString upperQuery = queryStr.toUpper();
+    if (!upperQuery.startsWith("SELECT") && !upperQuery.startsWith("WITH")) {
+        QMessageBox::warning(this, tr("Query Restriction"),
+                             tr("For safety reasons, only SELECT queries are allowed."));
+        return;
+    }
+
     // Clear previous results
     model->clear();
 
@@ -62,17 +70,10 @@ void SQLQueryWindow::on_executeButton_clicked()
         int rowCount = model->rowCount();
 
         // Update status label
-        if (queryStr.toLower().startsWith("select")) {
-            ui->statusLabel->setText(QString("Query executed successfully. Returned %1 %2. Execution time: %3 ms.")
-                                         .arg(rowCount)
-                                         .arg(rowCount == 1 ? "row" : "rows")
-                                         .arg(elapsed));
-        } else {
-            ui->statusLabel->setText(QString("Query executed successfully. %1 %2 affected. Execution time: %3 ms.")
-                                         .arg(query.numRowsAffected())
-                                         .arg(query.numRowsAffected() == 1 ? "row" : "rows")
-                                         .arg(elapsed));
-        }
+        ui->statusLabel->setText(QString("Query executed successfully. Returned %1 %2. Execution time: %3 ms.")
+                                     .arg(rowCount)
+                                     .arg(rowCount == 1 ? "row" : "rows")
+                                     .arg(elapsed));
     } else {
         ui->statusLabel->setText(QString("Error: %1").arg(query.lastError().text()));
     }

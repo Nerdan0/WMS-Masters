@@ -5,7 +5,16 @@
 #include <QMessageBox>
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) :
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // Close all child windows
+    closeAllChildWindows();
+
+    // Accept the close event
+    event->accept();
+}
+
+    MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     itemsWindow(nullptr),

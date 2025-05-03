@@ -5,6 +5,7 @@
 #include <QSqlRelationalTableModel>
 #include <QDataWidgetMapper>
 #include <QDate>
+#include "orderlineswindow.h"
 
 namespace Ui {
 class OrdersWindow;
@@ -26,11 +27,13 @@ private slots:
     void on_cancelButton_clicked();
     void on_tableView_clicked(const QModelIndex &index);
     void on_viewLinesButton_clicked();
+    void on_tableView_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::OrdersWindow *ui;
     QSqlTableModel *model;
     QDataWidgetMapper *mapper;
+    OrderLinesWindow *orderLinesWindow;
     bool isAdding;
 
     void setupModel();
@@ -38,4 +41,5 @@ private:
     void enableFormFields(bool enable);
     void clearForm();
     void updateButtonStates(bool editMode);
+    void openOrderLines(int orderId);
 };
