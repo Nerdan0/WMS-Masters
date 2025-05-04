@@ -1,6 +1,4 @@
-#ifndef ORDERLINESWINDOW_H
-#define ORDERLINESWINDOW_H
-
+#pragma once
 #include <QWidget>
 #include <QSqlTableModel>
 #include <QSqlRelationalTableModel>
@@ -56,5 +54,3 @@ private:
     void updateOrderNavigation();
     void refreshOrderLinesTable();
 };
-
-#endif // ORDERLINESWINDOW_H

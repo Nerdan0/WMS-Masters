@@ -1,5 +1,4 @@
-#ifndef DATABASEMANAGER_H
-#define DATABASEMANAGER_H
+#pragma once
 
 #include <QObject>
 #include <QSqlDatabase>
@@ -18,7 +17,6 @@ public:
     bool initializeDatabase();
     bool validateUser(const QString& username, const QString& password);
 
-    // Methods for CRUD operations on tables
     // Users
     bool addUser(const QString& login, const QString& password);
     bool updateUser(int id, const QString& login, const QString& password);
@@ -39,7 +37,6 @@ public:
     bool updateOrderLine(int id, int orderId, const QString& orderNumber, int itemId, int quantity);
     bool deleteOrderLine(int id);
 
-    // Execute raw SQL query
     QSqlQuery executeQuery(const QString& query);
 
 private:
@@ -54,5 +51,3 @@ private:
 
     QSqlDatabase m_db;
 };
-
-#endif // DATABASEMANAGER_H
