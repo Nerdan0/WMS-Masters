@@ -229,8 +229,20 @@ void OrderLinesWindow::setupLineModel()
 
     // Connect to data changes in the model
     connect(model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight) {
+        // Store the current row before submitting
+        int currentRow = ui->tableView->currentIndex().row();
+
         // When data changes in the view (like editing quantity), submit it to the database
-        model->submitAll();
+        if (model->submitAll()) {
+            // Refresh the data after submitting
+            model->select();
+
+            // Reselect the same row after refresh if it still exists
+            if (currentRow >= 0 && currentRow < model->rowCount()) {
+                ui->tableView->selectRow(currentRow);
+                on_tableView_clicked(model->index(currentRow, 0));
+            }
+        }
     });
 
     // Setup the mapper
