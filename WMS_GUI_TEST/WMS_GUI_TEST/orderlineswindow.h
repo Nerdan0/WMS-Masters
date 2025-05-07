@@ -5,6 +5,7 @@
 #include <QDataWidgetMapper>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QCompleter>
 
 namespace Ui {
 class OrderLinesWindow;
@@ -31,6 +32,7 @@ private slots:
     void on_prevOrderButton_clicked();
     void on_nextOrderButton_clicked();
     void on_searchOrderButton_clicked();
+    void updateItemDescription(int index);
 
 private:
     Ui::OrderLinesWindow *ui;
@@ -53,4 +55,5 @@ private:
     void updateOrderHeaderInfo();
     void updateOrderNavigation();
     void refreshOrderLinesTable();
+    void setupItemComboBox();
 };
