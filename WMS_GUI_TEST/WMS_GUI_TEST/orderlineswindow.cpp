@@ -166,6 +166,7 @@ void OrderLinesWindow::setupLineModel()
     // Set model to table view
     ui->tableView->setModel(model);
     ui->tableView->setItemDelegate(new QSqlRelationalDelegate(ui->tableView));
+    ui->tableView->hideColumn(0); // Hide ID column
     ui->tableView->hideColumn(1); // Hide Order ID column
     ui->tableView->hideColumn(2); // Hide Order Number column
 

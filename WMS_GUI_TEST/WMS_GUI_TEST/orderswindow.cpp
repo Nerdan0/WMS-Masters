@@ -73,6 +73,16 @@ void OrdersWindow::setupModel()
 
     // Set model to table view
     ui->tableView->setModel(model);
+
+    // Hide ID column
+    ui->tableView->hideColumn(0);
+
+    // Select first row if available
+    // if (model->rowCount() > 0) {
+    //     ui->tableView->selectRow(0);
+    //     // Trigger the clicked handler to load the first row data
+    //     on_tableView_clicked(model->index(0, 0));
+    // }
 }
 
 void OrdersWindow::setupMapper()

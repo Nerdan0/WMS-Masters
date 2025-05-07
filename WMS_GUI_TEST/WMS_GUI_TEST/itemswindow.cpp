@@ -4,6 +4,7 @@
 #include <QSqlError>
 #include <QScreen>
 #include <QGuiApplication>
+#include <QSqlQuery>
 
 ItemsWindow::ItemsWindow(QWidget *parent) :
     QWidget(parent),
@@ -61,13 +62,8 @@ void ItemsWindow::setupModel()
     // Set model to table view
     ui->tableView->setModel(model);
 
-    // Select the first row if data exists
-    // crashes
-    // if (model->rowCount() > 0) {
-    //     ui->tableView->selectRow(0);
-    //     mapper->setCurrentIndex(0);
-    //     updateButtonStates(false);
-    // }
+    // Hide ID column
+    ui->tableView->hideColumn(0);
 }
 
 void ItemsWindow::setupMapper()
@@ -141,6 +137,7 @@ void ItemsWindow::on_deleteButton_clicked()
     }
 
     int row = ui->tableView->currentIndex().row();
+    int itemId = model->data(model->index(row, 0)).toInt();
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, tr("Delete Item"),
@@ -148,10 +145,29 @@ void ItemsWindow::on_deleteButton_clicked()
                                   QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
+        // Check if the item is used in any order lines
+        QSqlQuery checkQuery;
+        checkQuery.prepare("SELECT COUNT(*) FROM order_lines WHERE item_id = :id");
+        checkQuery.bindValue(":id", itemId);
+
+        if (checkQuery.exec() && checkQuery.next()) {
+            int count = checkQuery.value(0).toInt();
+            if (count > 0) {
+                QMessageBox::warning(this, tr("Cannot Delete Item"),
+                                     tr("This item cannot be deleted because it is used in %1 order lines. "
+                                        "Remove the item from all orders first.").arg(count));
+                return;
+            }
+        }
+
         model->removeRow(row);
-        model->submitAll();
-        model->select();
-        clearForm();
+        if (model->submitAll()) {
+            model->select();
+            clearForm();
+        } else {
+            QMessageBox::warning(this, tr("Database Error"),
+                                 tr("Failed to delete item: %1").arg(model->lastError().text()));
+        }
     }
 }
 

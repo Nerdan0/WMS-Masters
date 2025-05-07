@@ -62,6 +62,9 @@ void UsersWindow::setupModel()
 
     // Set model to table view
     ui->tableView->setModel(model);
+
+    // Hide ID column
+    ui->tableView->hideColumn(0);
 }
 
 void UsersWindow::setupMapper()
