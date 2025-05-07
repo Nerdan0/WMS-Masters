@@ -100,68 +100,6 @@ void OrderLinesWindow::updateItemDescription(int index)
     }
 }
 
-// void OrderLinesWindow::updateItemDescription(int index)
-// {
-//     qDebug() << "updateItemDescription called with index:" << index;
-
-//     if (index >= 0) {
-//         QVariant itemData = ui->itemComboBox->currentData();
-//         qDebug() << "Item data:" << itemData;
-
-//         QSqlQuery query;
-//         // First try to get the ID from the combo box data
-//         bool isNumber;
-//         int itemId = itemData.toInt(&isNumber);
-
-//         if (isNumber) {
-//             query.prepare("SELECT item_description FROM items WHERE id = :id");
-//             query.bindValue(":id", itemId);
-//             qDebug() << "Looking up by item ID:" << itemId;
-//         } else {
-//             // If that fails, try using the current text
-//             QString itemText = ui->itemComboBox->currentText();
-//             // If text contains a dash, it might be in "CODE - DESCRIPTION" format
-//             if (itemText.contains(" - ")) {
-//                 itemText = itemText.section(" - ", 0, 0).trimmed();
-//             }
-
-//             query.prepare("SELECT item_description FROM items WHERE item_code = :code");
-//             query.bindValue(":code", itemText);
-//             qDebug() << "Looking up by item code:" << itemText;
-//         }
-
-//         if (query.exec() && query.next()) {
-//             ui->itemDescriptionLineEdit->setText(query.value(0).toString());
-//             qDebug() << "Description text:" << query.value(0).toString();
-//         } else {
-//             ui->itemDescriptionLineEdit->clear();
-//             qDebug() << "No description found. Query error:" << query.lastError().text();
-//         }
-//     } else {
-//         ui->itemDescriptionLineEdit->clear();
-//         qDebug() << "Invalid index, clearing description";
-//     }
-// }
-
-// void OrderLinesWindow::updateItemDescription(int index)
-// {
-//     if (index >= 0) {
-//         QSqlQuery query;
-//         query.prepare("SELECT item_description FROM items WHERE id = :id");
-//         query.bindValue(":id", index);
-
-//         if (query.exec() && query.next()) {
-//             ui->itemDescriptionLineEdit->setText(query.value(0).toString());
-//             qDebug()<< "Desc:" <<query.value(0).toString();
-//         } else {
-//             ui->itemDescriptionLineEdit->clear();
-//         }
-//     } else {
-//         ui->itemDescriptionLineEdit->clear();
-//     }
-// }
-
-
 void OrderLinesWindow::loadOrderData()
 {
     orderIdsList.clear();
@@ -281,10 +219,19 @@ void OrderLinesWindow::setupLineModel()
 
     // Set model to table view
     ui->tableView->setModel(model);
-    ui->tableView->setItemDelegate(new QSqlRelationalDelegate(ui->tableView));
+
+    // Use custom delegate that makes item code column read-only
+    ui->tableView->setItemDelegate(new CustomOrderLinesDelegate(ui->tableView));
+
     ui->tableView->hideColumn(0); // Hide ID column
     ui->tableView->hideColumn(1); // Hide Order ID column
     ui->tableView->hideColumn(2); // Hide Order Number column
+
+    // Connect to data changes in the model
+    connect(model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight) {
+        // When data changes in the view (like editing quantity), submit it to the database
+        model->submitAll();
+    });
 
     // Setup the mapper
     setupMapper();
@@ -299,6 +246,9 @@ void OrderLinesWindow::setupMapper()
 
     mapper = new QDataWidgetMapper(this);
     mapper->setModel(model);
+
+    // Use a regular QSqlRelationalDelegate for the form
+    // since we still want to edit the item through the combo box
     mapper->setItemDelegate(new QSqlRelationalDelegate(this));
     mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
 

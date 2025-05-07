@@ -6,10 +6,30 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QCompleter>
+#include <QSqlRelationalDelegate>
 
 namespace Ui {
 class OrderLinesWindow;
 }
+
+// Custom delegate to make certain columns read-only
+class CustomOrderLinesDelegate : public QSqlRelationalDelegate
+{
+    Q_OBJECT
+public:
+    CustomOrderLinesDelegate(QObject *parent = nullptr)
+        : QSqlRelationalDelegate(parent) {}
+
+    virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                  const QModelIndex &index) const override
+    {
+        // Only allow editing for quantity column (column 4)
+        if (index.column() != 4) {
+            return nullptr; // No editor will be created, making it read-only
+        }
+        return QSqlRelationalDelegate::createEditor(parent, option, index);
+    }
+};
 
 class OrderLinesWindow : public QWidget
 {
