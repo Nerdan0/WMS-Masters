@@ -78,6 +78,10 @@ void ItemsWindow::setupMapper()
     mapper->addMapping(ui->descriptionLineEdit, 2);
     mapper->addMapping(ui->quantitySpinBox, 3);
     mapper->addMapping(ui->priceDoubleSpinBox, 4);
+    if (model->rowCount() > 0) {
+        ui->tableView->selectRow(0);
+        mapper->setCurrentIndex(0);
+    }
 }
 
 void ItemsWindow::enableFormFields(bool enable)

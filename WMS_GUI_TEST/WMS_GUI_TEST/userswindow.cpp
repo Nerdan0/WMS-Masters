@@ -77,6 +77,11 @@ void UsersWindow::setupMapper()
     mapper->addMapping(ui->idLineEdit, 0);
     mapper->addMapping(ui->loginLineEdit, 1);
     // We don't map password field as it's hashed in the database
+
+    if (model->rowCount() > 0) {
+        ui->tableView->selectRow(0);
+        mapper->setCurrentIndex(0);
+    }
 }
 
 void UsersWindow::enableFormFields(bool enable)

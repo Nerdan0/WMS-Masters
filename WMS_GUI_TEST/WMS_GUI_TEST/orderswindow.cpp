@@ -76,13 +76,6 @@ void OrdersWindow::setupModel()
 
     // Hide ID column
     ui->tableView->hideColumn(0);
-
-    // Select first row if available
-    // if (model->rowCount() > 0) {
-    //     ui->tableView->selectRow(0);
-    //     // Trigger the clicked handler to load the first row data
-    //     on_tableView_clicked(model->index(0, 0));
-    // }
 }
 
 void OrdersWindow::setupMapper()
@@ -96,6 +89,10 @@ void OrdersWindow::setupMapper()
     mapper->addMapping(ui->orderNumberLineEdit, 1);
     // Need a special delegate for date field
     mapper->addMapping(ui->typeComboBox, 3);
+    if (model->rowCount() > 0) {
+        ui->tableView->selectRow(0);
+        mapper->setCurrentIndex(0);
+    }
 }
 
 void OrdersWindow::enableFormFields(bool enable)
