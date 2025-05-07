@@ -47,6 +47,7 @@ private:
 
     bool createTables();
     bool populateSampleData();
+
     QString hashPassword(const QString& password);
 
     QSqlDatabase m_db;

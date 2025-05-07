@@ -109,9 +109,9 @@ bool DatabaseManager::createTables()
                     "order_number TEXT NOT NULL, "
                     "item_id INTEGER NOT NULL, "
                     "quantity INTEGER NOT NULL, "
-                    "FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE, "
-                    "FOREIGN KEY (order_number) REFERENCES orders(order_number) ON DELETE CASCADE, "
-                    "FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE RESTRICT)")) {
+                    "FOREIGN KEY (order_id) REFERENCES orders(id), "
+                    "FOREIGN KEY (order_number) REFERENCES orders(order_number), "
+                    "FOREIGN KEY (item_id) REFERENCES items(id))")) {
         qDebug() << "Failed to create order_lines table:" << query.lastError().text();
         return false;
     }

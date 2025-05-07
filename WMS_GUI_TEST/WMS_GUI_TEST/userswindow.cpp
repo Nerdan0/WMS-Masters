@@ -139,6 +139,13 @@ void UsersWindow::on_editButton_clicked()
 
 void UsersWindow::on_deleteButton_clicked()
 {
+    // Check if this is the last user
+    QSqlQuery countQuery("SELECT COUNT(*) FROM users");
+    if (countQuery.next() && countQuery.value(0).toInt() <= 1) {
+        QMessageBox::warning(this, tr("Delete User"), tr("Cannot delete the last user in the system."));
+        return;
+    }
+
     if (!ui->tableView->currentIndex().isValid()) {
         QMessageBox::warning(this, tr("Delete User"), tr("Please select a user to delete."));
         return;

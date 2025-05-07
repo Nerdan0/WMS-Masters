@@ -60,6 +60,14 @@ void ItemsWindow::setupModel()
 
     // Set model to table view
     ui->tableView->setModel(model);
+
+    // Select the first row if data exists
+    // crashes
+    // if (model->rowCount() > 0) {
+    //     ui->tableView->selectRow(0);
+    //     mapper->setCurrentIndex(0);
+    //     updateButtonStates(false);
+    // }
 }
 
 void ItemsWindow::setupMapper()
